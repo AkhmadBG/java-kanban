@@ -2,13 +2,12 @@ import java.util.Objects;
 
 public class Task {
 
-    private int id;
-    private String name;
-    private String description;
-    private TaskStatus taskStatus;
+    protected int id;
+    protected String name;
+    protected String description;
+    protected TaskStatus taskStatus;
 
-    public Task(int id, String name, String description) {
-        this.id = id;
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.taskStatus = TaskStatus.NEW;
