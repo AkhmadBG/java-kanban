@@ -55,7 +55,7 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, taskStatus);
+        return Objects.hash(id);
     }
 
     @Override
