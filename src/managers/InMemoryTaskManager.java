@@ -1,3 +1,9 @@
+package managers;
+
+import model.Epic;
+import model.SubTask;
+import model.Task;
+
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -63,18 +69,6 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    public List<Task> getTasks() {
-        return new ArrayList<>(tasks.values());
-    }
-
-    public List<Epic> getEpics() {
-        return new ArrayList<>(epics.values());
-    }
-
-    public List<SubTask> getSubTasks() {
-        return new ArrayList<>(subTasks.values());
-    }
-
     @Override
     public List<Task> getAllTasks() {
         Map<Integer, Task> allTasks = new HashMap<>();
@@ -121,36 +115,6 @@ public class InMemoryTaskManager implements TaskManager {
             subTasks.put(subTask.getId(), subTask);
             Epic epic = epics.get(subTasks.get(subTask.getId()).getEpicId());
             updateEpicStatus(epic);
-        }
-    }
-
-    @Override
-    public void updateEpicStatus(Epic epic) {
-        ArrayList<Integer> subTaskIdsInEpic = epic.getSubTasksIds();
-
-        boolean flagNew = true;
-        boolean flagDone = true;
-
-        for (Integer subTaskIdInEpic : subTaskIdsInEpic) {
-            if (!subTasks.get(subTaskIdInEpic).getTaskStatus().equals(TaskStatus.NEW)) {
-                flagNew = false;
-                break;
-            }
-        }
-
-        for (Integer subTaskIdInEpic : subTaskIdsInEpic) {
-            if (!subTasks.get(subTaskIdInEpic).getTaskStatus().equals(TaskStatus.DONE)) {
-                flagDone = false;
-                break;
-            }
-        }
-
-        if (flagNew) {
-            epic.setTaskStatus(TaskStatus.NEW);
-        } else if (flagDone) {
-            epic.setTaskStatus(TaskStatus.DONE);
-        } else {
-            epic.setTaskStatus(TaskStatus.IN_PROGRESS);
         }
     }
 
@@ -213,14 +177,6 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    public int getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(int identifier) {
-        this.identifier = identifier;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -235,5 +191,54 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int hashCode() {
         return Objects.hash(identifier, tasks, epics, subTasks);
+    }
+
+    private void updateEpicStatus(Epic epic) {
+        ArrayList<Integer> subTaskIdsInEpic = epic.getSubTasksIds();
+
+        boolean flagNew = true;
+        boolean flagDone = true;
+
+        for (Integer subTaskIdInEpic : subTaskIdsInEpic) {
+            if (!subTasks.get(subTaskIdInEpic).getTaskStatus().equals(TaskStatus.NEW)) {
+                flagNew = false;
+                break;
+            }
+        }
+
+        for (Integer subTaskIdInEpic : subTaskIdsInEpic) {
+            if (!subTasks.get(subTaskIdInEpic).getTaskStatus().equals(TaskStatus.DONE)) {
+                flagDone = false;
+                break;
+            }
+        }
+
+        if (flagNew) {
+            epic.setTaskStatus(TaskStatus.NEW);
+        } else if (flagDone) {
+            epic.setTaskStatus(TaskStatus.DONE);
+        } else {
+            epic.setTaskStatus(TaskStatus.IN_PROGRESS);
+        }
+    }
+
+    public int getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
+    public List<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
+    }
+
+    public List<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
+    }
+
+    public List<SubTask> getSubTasks() {
+        return new ArrayList<>(subTasks.values());
     }
 }

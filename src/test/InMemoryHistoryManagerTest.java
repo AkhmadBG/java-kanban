@@ -1,3 +1,6 @@
+import managers.InMemoryHistoryManager;
+import managers.InMemoryTaskManager;
+import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

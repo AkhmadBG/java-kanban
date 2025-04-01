@@ -1,3 +1,5 @@
+package model;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -18,6 +20,9 @@ public class Epic extends Task {
     }
 
     public void addSubTaskId(int subTaskId) {
+        if (subTasksIds.contains(subTaskId) || subTaskId == this.getId()) {
+            return;
+        }
         subTasksIds.add(subTaskId);
     }
 

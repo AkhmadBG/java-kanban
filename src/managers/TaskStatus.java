@@ -1,3 +1,5 @@
+package managers;
+
 public enum TaskStatus {
 
     NEW,

@@ -1,8 +1,10 @@
+import managers.InMemoryTaskManager;
+import model.Epic;
+import model.SubTask;
+import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
 
 class InMemoryTaskManagerTest {
 
@@ -16,6 +18,7 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldCreateTask() {
         Task task = taskManager.createTask("Задача  1", "Описание 1");
+
         assertNotNull(task);
         assertEquals("Задача  1", task.getName());
         assertEquals("Описание 1", task.getDescription());
@@ -24,6 +27,7 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldCreateEpic() {
         Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
+
         assertNotNull(epic);
         assertEquals("Эпик 1", epic.getName());
         assertEquals("Описание эпика", epic.getDescription());
@@ -79,7 +83,6 @@ class InMemoryTaskManagerTest {
     void shouldDeleteEpicAndItsSubTasks() {
         Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
         SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи", epic.getId());
-
         taskManager.deleteEpic(epic.getId());
 
         assertNull(taskManager.getEpic(epic.getId()));
@@ -90,7 +93,6 @@ class InMemoryTaskManagerTest {
     void shouldDeleteAllTasks() {
         taskManager.createTask("Задача 1", "Описание 1");
         taskManager.createEpic("Эпик 1", "Описание эпика");
-
         taskManager.deleteAllTasks();
 
         assertTrue(taskManager.getTasks().isEmpty());

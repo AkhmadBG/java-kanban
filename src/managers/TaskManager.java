@@ -1,3 +1,9 @@
+package managers;
+
+import model.Epic;
+import model.SubTask;
+import model.Task;
+
 import java.util.List;
 
 public interface TaskManager {
@@ -22,8 +28,6 @@ public interface TaskManager {
     void updateEpic(Epic epic);
 
     void updateSubTask(SubTask subTask);
-
-    void updateEpicStatus(Epic epic);
 
     void deleteTask(int taskId);
 

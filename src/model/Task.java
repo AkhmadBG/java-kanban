@@ -1,3 +1,7 @@
+package model;
+
+import managers.TaskStatus;
+
 import java.util.Objects;
 
 public class Task {
