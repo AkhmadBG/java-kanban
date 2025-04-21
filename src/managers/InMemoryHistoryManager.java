@@ -35,9 +35,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void removeAllTasks(){
+    public void removeAllTasks() {
         history.clear();
         customLinkedList.clear();
     }
-
 }

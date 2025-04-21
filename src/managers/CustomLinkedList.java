@@ -58,7 +58,7 @@ public class CustomLinkedList<T extends Task> {
     }
 
     public void clear() {
-        for (CustomLinkedList.Node<T> x = head; x != null;) {
+        for (CustomLinkedList.Node<T> x = head; x != null; ) {
             CustomLinkedList.Node<T> next = x.next;
             x.data = null;
             x.next = null;

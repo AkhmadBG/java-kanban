@@ -32,7 +32,7 @@ class CustomLinkedListTest {
     }
 
     @Test
-    void shouldReturnEmptyListTasks(){
+    void shouldReturnEmptyListTasks() {
         Task task1 = new Task("Задача 1", "Описание задачи 1");
         Task task2 = new Task("Задача 2", "Описание задачи 2");
 
