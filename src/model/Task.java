@@ -76,7 +76,6 @@ public class Task implements Cloneable {
     public Task clone() {
         try {
             Task clone = (Task) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

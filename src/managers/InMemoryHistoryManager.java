@@ -3,33 +3,39 @@ package managers;
 import model.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final CustomLinkedList<Task> customLinkedList = new CustomLinkedList<>();
-    private final Map<Integer, CustomLinkedList.Node<Task>> history = new HashMap<>();
+//    Правильно ли я понял, что необходимо удалить полностью класс CustomLinkedList,
+//    который у меня был, а его функционал реализовать в этом классе?
+//    Для соблюдения порядка в истории просмотров от новых к старым применил LinkedHashMap
+    private final Map<Integer, Node<Task>> history = new LinkedHashMap<>();
 
     @Override
     public void add(Task task) {
         if (task == null) return;
-        CustomLinkedList.Node<Task> node = history.get(task.getId());
+        Node<Task> node = history.get(task.getId());
         if (node != null) {
-            customLinkedList.removeNode(node);
+            removeNode(node);
+            history.remove(task.getId());
         }
-        CustomLinkedList.Node<Task> newNode = customLinkedList.linkLast(task);
+        Node<Task> newNode = linkLast(task);
         history.put(task.getId(), newNode);
     }
 
     @Override
     public List<Task> getHistory() {
-        return customLinkedList.getTasks();
+        return history.values().stream()
+                .map(node -> node.data)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void remove(int id) {
-        CustomLinkedList.Node<Task> node = history.get(id);
+        Node<Task> node = history.get(id);
         if (node != null) {
-            customLinkedList.removeNode(node);
+            removeNode(node);
             history.remove(id);
         }
     }
@@ -37,6 +43,57 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void removeAllTasks() {
         history.clear();
-        customLinkedList.clear();
+        clear();
+    }
+
+    public static class Node<E> {
+        E data;
+        Node<E> next;
+        Node<E> prev;
+
+        public Node(E data) {
+            this.data = data;
+        }
+    }
+
+    private static Node<Task> head;
+    private static Node<Task> tail;
+
+    public static Node<Task> linkLast(Task data) {
+        Node<Task> newNode = new Node<>(data);
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        }
+        return newNode;
+    }
+
+    public static void removeNode(Node<Task> node) {
+        if (node == null) return;
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next;
+        }
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev;
+        }
+    }
+
+    public static void clear() {
+        for (Node<Task> x = head; x != null; ) {
+            Node<Task> next = x.next;
+            x.data = null;
+            x.next = null;
+            x.prev = null;
+            x = next;
+        }
+        head = tail = null;
     }
 }

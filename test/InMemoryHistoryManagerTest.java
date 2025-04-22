@@ -33,13 +33,15 @@ class InMemoryHistoryManagerTest {
     void shouldRemoveOldestWatchingTask() {
         Task task1 = taskManager.createTask("Задача 1", "Описание задачи 1");
         Task task2 = taskManager.createTask("Задача 2", "Описание задачи 2");
-        taskManager.getTask(1);
         taskManager.getTask(2);
         taskManager.getTask(1);
+        taskManager.getTask(2);
+
         List<Task> list = taskManager.getHistory();
 
-        assertEquals(task1, list.get(1));
-        assertEquals(task2, list.get(0));
+        assertEquals(2, list.size());
+        assertEquals(task1, list.get(0));
+        assertEquals(task2, list.get(1));
     }
 
     @Test
