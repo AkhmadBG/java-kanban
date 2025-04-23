@@ -4,7 +4,7 @@ import managers.TaskStatus;
 
 import java.util.Objects;
 
-public class Task {
+public class Task implements Cloneable {
 
     protected int id;
     protected String name;
@@ -70,5 +70,15 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", taskStatus=" + taskStatus +
                 " }";
+    }
+
+    @Override
+    public Task clone() {
+        try {
+            Task clone = (Task) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
