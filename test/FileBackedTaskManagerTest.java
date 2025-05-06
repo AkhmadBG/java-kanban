@@ -10,7 +10,7 @@ import java.util.List;
 
 import static enums.TaskStatus.*;
 import static enums.TaskType.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTaskManagerTest {
 
@@ -39,10 +39,10 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Task loadedTask = loadedManager.getTask(task.getId());
 
-        assertThat(loadedTask).isNotNull();
-        assertThat(loadedTask.getName()).isEqualTo("Задача");
-        assertThat(loadedTask.getDescription()).isEqualTo("Описание");
-        assertThat(loadedTask.getTaskStatus()).isEqualTo(IN_PROGRESS);
+        assertNotNull(loadedTask);
+        assertEquals("Задача", loadedTask.getName());
+        assertEquals("Описание", loadedTask.getDescription());
+        assertEquals(IN_PROGRESS, loadedTask.getTaskStatus());
     }
 
     @Test
@@ -52,14 +52,14 @@ class FileBackedTaskManagerTest {
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic loadedEpic = loadedManager.getEpic(epic.getId());
-        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(1);
+        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(epic.getId());
 
-        assertThat(loadedEpic).isNotNull();
-        assertThat(loadedEpic.getName()).isEqualTo("Эпик");
-        assertThat(loadedEpic.getSubTasksIds()).contains(subTask.getId());
+        assertNotNull(loadedEpic);
+        assertEquals("Эпик", loadedEpic.getName());
+        assertTrue(loadedEpic.getSubTasksIds().contains(subTask.getId()));
 
-        assertThat(loadedSubTasks).hasSize(1);
-        assertThat(loadedSubTasks.get(0).getName()).isEqualTo("Подзадача");
+        assertEquals(1, loadedSubTasks.size());
+        assertEquals("Подзадача", loadedSubTasks.get(0).getName());
     }
 
     @Test
@@ -73,9 +73,9 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Task updated = loadedManager.getTask(task.getId());
 
-        assertThat(updated.getName()).isEqualTo("Обновление названия задачи");
-        assertThat(updated.getDescription()).isEqualTo("Обновление описания");
-        assertThat(updated.getTaskStatus()).isEqualTo(DONE);
+        assertEquals("Обновление названия задачи", updated.getName());
+        assertEquals("Обновление описания", updated.getDescription());
+        assertEquals(DONE, updated.getTaskStatus());
     }
 
     @Test
@@ -91,8 +91,8 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         SubTask updated = loadedManager.getSubTask(subTask.getId());
 
-        assertThat(updated.getName()).isEqualTo("Обновление названия подзадачи");
-        assertThat(updated.getTaskStatus()).isEqualTo(IN_PROGRESS);
+        assertEquals("Обновление названия подзадачи", updated.getName());
+        assertEquals(IN_PROGRESS, updated.getTaskStatus());
     }
 
     @Test
@@ -105,8 +105,7 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic updated = loadedManager.getEpic(epic.getId());
 
-        assertThat(updated.getName()).isEqualTo("Обновление названия");
-        assertThat(updated.getDescription()).isEqualTo("Обновление описания");
+        assertEquals("Обновление названия", updated.getName());
+        assertEquals("Обновление описания", updated.getDescription());
     }
-
 }
