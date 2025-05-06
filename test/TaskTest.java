@@ -1,8 +1,9 @@
-import managers.TaskStatus;
+import enums.TaskStatus;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static enums.TaskType.TASK_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
@@ -11,13 +12,13 @@ class TaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new Task("Тестовая задача", "Описание тестовой задачи");
+        task = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
     }
 
     @Test
     void testConstructor() {
-        assertEquals("Тестовая задача", task.getName());
-        assertEquals("Описание тестовой задачи", task.getDescription());
+        assertEquals("Задача 1", task.getName());
+        assertEquals("Описание задачи", task.getDescription());
         assertEquals(TaskStatus.NEW, task.getTaskStatus());
     }
 
@@ -47,10 +48,10 @@ class TaskTest {
 
     @Test
     void testEqualsAndHashCode() {
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
+        Task task1 = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
         task1.setId(100);
 
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task2 = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
         task2.setId(100);
 
         assertEquals(task1, task2);
@@ -60,7 +61,7 @@ class TaskTest {
     @Test
     void testToString() {
         task.setId(1);
-        String expected = "Task { id=1, name='Тестовая задача', description='Описание тестовой задачи', taskStatus=NEW }";
+        String expected = "1,TASK_TYPE,Задача 1,Описание задачи,NEW";
         assertEquals(expected, task.toString());
     }
 }

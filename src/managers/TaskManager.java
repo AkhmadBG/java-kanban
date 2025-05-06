@@ -1,5 +1,6 @@
 package managers;
 
+import enums.TaskType;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -7,27 +8,28 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    Task createTask(String name, String description);
 
-    Epic createEpic(String name, String description);
+    Task createTask(TaskType type, String name, String description);
 
-    SubTask createSubTask(String name, String description, int epicId);
+    Epic createEpic(TaskType type, String name, String description);
+
+    SubTask createSubTask(TaskType type, String name, String description, int epicId);
 
     Task getTask(int taskId);
 
-    Task getEpic(int epicId);
+    Epic getEpic(int epicId);
 
-    Task getSubTask(int subTaskId);
+    SubTask getSubTask(int subTaskId);
 
     List<Task> getAllTasks();
 
     List<SubTask> getAllSubTasksInEpic(int epicId);
 
-    void updateTask(Task task);
+    Task updateTask(Task task);
 
-    void updateEpic(Epic epic);
+    Epic updateEpic(Epic epic);
 
-    void updateSubTask(SubTask subTask);
+    SubTask updateSubTask(SubTask subTask);
 
     void deleteTask(int taskId);
 
@@ -37,11 +39,11 @@ public interface TaskManager {
 
     void deleteAllTasks();
 
-    void addNewTask(Task task);
+    Task addNewTask(Task task);
 
-    void addNewEpic(Epic epic);
+    Epic addNewEpic(Epic epic);
 
-    void addNewSubTask(SubTask subTask);
+    SubTask addNewSubTask(SubTask subTask);
 
     List<Task> getTasks();
 
@@ -50,4 +52,5 @@ public interface TaskManager {
     List<SubTask> getSubTasks();
 
     List<Task> getHistory();
+
 }

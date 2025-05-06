@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static enums.TaskType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
@@ -21,7 +22,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldAddTaskToHistory() {
-        Task task = taskManager.createTask("Задача  1", "Описание 1");
+        Task task = taskManager.createTask(TASK_TYPE, "Задача  1", "Описание 1");
         historyManager.add(task);
         List<Task> history = historyManager.getHistory();
 
@@ -31,8 +32,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldRemoveOldestWatchingTask() {
-        Task task1 = taskManager.createTask("Задача 1", "Описание задачи 1");
-        Task task2 = taskManager.createTask("Задача 2", "Описание задачи 2");
+        Task task1 = taskManager.createTask(TASK_TYPE, "Задача 1", "Описание задачи 1");
+        Task task2 = taskManager.createTask(TASK_TYPE, "Задача 2", "Описание задачи 2");
         taskManager.getTask(2);
         taskManager.getTask(1);
         taskManager.getTask(2);
@@ -51,8 +52,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldRemoveAllTasks() {
-        Task task1 = new Task("Задача 1", "Описание задачи 1");
-        Task task2 = new Task("Задача 2", "Описание задачи 2");
+        Task task1 = new Task(TASK_TYPE, "Задача 1", "Описание задачи 1");
+        Task task2 = new Task(TASK_TYPE, "Задача 2", "Описание задачи 2");
 
         historyManager.add(task1);
         historyManager.add(task2);

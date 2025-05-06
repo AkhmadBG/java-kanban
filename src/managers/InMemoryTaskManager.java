@@ -1,5 +1,7 @@
 package managers;
 
+import enums.TaskStatus;
+import enums.TaskType;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -9,30 +11,30 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
 
     private int identifier;
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
-    public Task createTask(String name, String description) {
-        Task task = new Task(name, description);
+    public Task createTask(TaskType type, String name, String description) {
+        Task task = new Task(type, name, description);
         task.setId(++identifier);
         tasks.put(identifier, task);
         return task;
     }
 
     @Override
-    public Epic createEpic(String name, String description) {
-        Epic epic = new Epic(name, description);
+    public Epic createEpic(TaskType type, String name, String description) {
+        Epic epic = new Epic(type, name, description);
         epic.setId(++identifier);
         epics.put(identifier, epic);
         return epic;
     }
 
     @Override
-    public SubTask createSubTask(String name, String description, int epicId) {
-        SubTask subTask = new SubTask(name, description, epicId);
+    public SubTask createSubTask(TaskType type, String name, String description, int epicId) {
+        SubTask subTask = new SubTask(type, name, description, epicId);
         subTask.setId(++identifier);
         subTasks.put(identifier, subTask);
         epics.get(epicId).addSubTaskId(subTask.getId());
@@ -50,7 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getEpic(int epicId) {
+    public Epic getEpic(int epicId) {
         if (epics.containsKey(epicId)) {
             Epic epic = epics.get(epicId);
             historyManager.add(epic);
@@ -60,7 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getSubTask(int subTaskId) {
+    public SubTask getSubTask(int subTaskId) {
         if (subTasks.containsKey(subTaskId)) {
             SubTask subTask = subTasks.get(subTaskId);
             historyManager.add(subTask);
@@ -96,26 +98,29 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task) {
+    public Task updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
         }
+        return task;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public Epic updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
         }
+        return epic;
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public SubTask updateSubTask(SubTask subTask) {
         if (subTasks.containsKey(subTask.getId())) {
             subTasks.put(subTask.getId(), subTask);
             Epic epic = epics.get(subTasks.get(subTask.getId()).getEpicId());
             updateEpicStatus(epic);
         }
+        return subTask;
     }
 
     @Override
@@ -159,22 +164,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addNewTask(Task task) {
+    public Task addNewTask(Task task) {
         task.setId(++identifier);
         tasks.put(task.getId(), task);
+        return task;
     }
 
     @Override
-    public void addNewEpic(Epic epic) {
+    public Epic addNewEpic(Epic epic) {
         epic.setId(++identifier);
         epics.put(epic.getId(), epic);
+        return epic;
     }
 
     @Override
-    public void addNewSubTask(SubTask subTask) {
+    public SubTask addNewSubTask(SubTask subTask) {
         subTask.setId(++identifier);
         epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);
+        return subTask;
     }
 
     @Override
