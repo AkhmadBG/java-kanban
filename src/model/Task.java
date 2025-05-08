@@ -5,6 +5,8 @@ import enums.TaskStatus;
 
 import java.util.Objects;
 
+import static enums.TaskType.TASK_TYPE;
+
 public class Task implements Cloneable {
 
     protected int id;
@@ -13,15 +15,15 @@ public class Task implements Cloneable {
     protected TaskStatus taskStatus;
     protected String description;
 
-    public Task(TaskType type, String name, String description) {
-        this.type = type;
+    public Task(String name, String description) {
+        this.type = TASK_TYPE;
         this.name = name;
         this.description = description;
         this.taskStatus = TaskStatus.NEW;
     }
 
-    public Task(TaskType type, String name, String description, TaskStatus taskStatus) {
-        this.type = type;
+    public Task(String name, String description, TaskStatus taskStatus) {
+        this.type = TASK_TYPE;
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -37,10 +39,6 @@ public class Task implements Cloneable {
 
     public TaskType getType() {
         return type;
-    }
-
-    public void setType(TaskType type) {
-        this.type = type;
     }
 
     public String getName() {

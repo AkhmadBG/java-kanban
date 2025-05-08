@@ -2,7 +2,6 @@ import model.SubTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static enums.TaskType.SUBTASK_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubTaskTest {
@@ -11,7 +10,7 @@ class SubTaskTest {
 
     @BeforeEach
     void setUp() {
-        subTask = new SubTask(SUBTASK_TYPE, "Подзадача 1", "Описание подзадачи", 1);
+        subTask = new SubTask("Подзадача 1", "Описание подзадачи", 1);
     }
 
     @Test

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static enums.TaskType.EPIC_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {
@@ -13,7 +12,7 @@ class EpicTest {
 
     @BeforeEach
     void setUp() {
-        epic = new Epic(EPIC_TYPE, "Эпик 1", "Описание эпика");
+        epic = new Epic("Эпик 1", "Описание эпика");
     }
 
     @Test

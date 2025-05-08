@@ -1,19 +1,22 @@
 package model;
 
 import enums.TaskStatus;
-import enums.TaskType;
+
+import static enums.TaskType.SUBTASK_TYPE;
 
 public class SubTask extends Task {
 
     private int epicId;
 
-    public SubTask(TaskType type, String name, String description, int epicId) {
-        super(type, name, description);
+    public SubTask(String name, String description, int epicId) {
+        super(name, description);
+        this.type = SUBTASK_TYPE;
         this.epicId = epicId;
     }
 
-    public SubTask(TaskType type, String name, String description, TaskStatus taskStatus, int epicId) {
-        super(type, name, description, taskStatus);
+    public SubTask(String name, String description, TaskStatus taskStatus, int epicId) {
+        super(name, description, taskStatus);
+        this.type = SUBTASK_TYPE;
         this.epicId = epicId;
     }
 

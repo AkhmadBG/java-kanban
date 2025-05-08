@@ -3,7 +3,7 @@ import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static enums.TaskType.TASK_TYPE;
+import static enums.TaskStatus.IN_PROGRESS;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
@@ -12,7 +12,7 @@ class TaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
+        task = new Task("Задача 1", "Описание задачи");
     }
 
     @Test
@@ -42,16 +42,16 @@ class TaskTest {
 
     @Test
     void testSetAndGetTaskStatus() {
-        task.setTaskStatus(TaskStatus.IN_PROGRESS);
-        assertEquals(TaskStatus.IN_PROGRESS, task.getTaskStatus());
+        task.setTaskStatus(IN_PROGRESS);
+        assertEquals(IN_PROGRESS, task.getTaskStatus());
     }
 
     @Test
     void testEqualsAndHashCode() {
-        Task task1 = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
+        Task task1 = new Task("Задача 1", "Описание задачи");
         task1.setId(100);
 
-        Task task2 = new Task(TASK_TYPE, "Задача 1", "Описание задачи");
+        Task task2 = new Task("Задача 1", "Описание задачи");
         task2.setId(100);
 
         assertEquals(task1, task2);
@@ -64,4 +64,5 @@ class TaskTest {
         String expected = "1,TASK_TYPE,Задача 1,Описание задачи,NEW";
         assertEquals(expected, task.toString());
     }
+
 }
