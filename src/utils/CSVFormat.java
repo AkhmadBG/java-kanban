@@ -2,15 +2,10 @@ package utils;
 
 import enums.TaskStatus;
 import enums.TaskType;
-import managers.FileBackedTaskManager;
 import model.Epic;
 import model.SubTask;
 import model.Task;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class CSVFormat {
@@ -50,37 +45,6 @@ public class CSVFormat {
             default:
                 return null;
         }
-    }
-
-    public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager fileBackedTaskManager;
-        try (FileReader fileReader = new FileReader(file);
-             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            fileBackedTaskManager = new FileBackedTaskManager(file);
-            while (bufferedReader.ready()) {
-                String taskString = bufferedReader.readLine();
-                if (!taskString.equals("id,type,name,description,status,epic")) {
-                    String[] arrayTaskString = taskString.split(",");
-                    switch (arrayTaskString[1]) {
-                        case "TASK_TYPE":
-                            fileBackedTaskManager.getTasks().put(Integer.parseInt(arrayTaskString[0]),
-                                    fromString(taskString));
-                            break;
-                        case "EPIC_TYPE":
-                            fileBackedTaskManager.getEpics().put(Integer.parseInt(arrayTaskString[0]),
-                                    (Epic) fromString(taskString));
-                            break;
-                        case "SUBTASK_TYPE":
-                            fileBackedTaskManager.getSubTasks().put(Integer.parseInt(arrayTaskString[0]),
-                                    (SubTask) fromString(taskString));
-                            break;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return fileBackedTaskManager;
     }
 
 }

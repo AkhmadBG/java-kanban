@@ -3,7 +3,6 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 import org.junit.jupiter.api.*;
-import utils.CSVFormat;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +35,7 @@ class FileBackedTaskManagerTest {
         task.setTaskStatus(IN_PROGRESS);
         fileBackedTaskManager.updateTask(task);
 
-        FileBackedTaskManager loadedManager = CSVFormat.loadFromFile(file);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Task loadedTask = loadedManager.getTask(task.getId());
 
         assertNotNull(loadedTask);
@@ -50,7 +49,7 @@ class FileBackedTaskManagerTest {
         Epic epic = fileBackedTaskManager.createEpic("Эпик", "Описание эпика");
         SubTask subTask = fileBackedTaskManager.createSubTask("Подзадача", "Описание подзадачи", epic.getId());
 
-        FileBackedTaskManager loadedManager = CSVFormat.loadFromFile(file);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic loadedEpic = loadedManager.getEpic(epic.getId());
         List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(epic.getId());
 
@@ -70,7 +69,7 @@ class FileBackedTaskManagerTest {
         task.setTaskStatus(DONE);
         fileBackedTaskManager.updateTask(task);
 
-        FileBackedTaskManager loadedManager = CSVFormat.loadFromFile(file);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Task updated = loadedManager.getTask(task.getId());
 
         assertEquals("Обновление названия задачи", updated.getName());
@@ -88,7 +87,7 @@ class FileBackedTaskManagerTest {
         subTask.setTaskStatus(IN_PROGRESS);
         fileBackedTaskManager.updateSubTask(subTask);
 
-        FileBackedTaskManager loadedManager = CSVFormat.loadFromFile(file);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         SubTask updated = loadedManager.getSubTask(subTask.getId());
 
         assertEquals("Обновление названия подзадачи", updated.getName());
@@ -102,7 +101,7 @@ class FileBackedTaskManagerTest {
         epic.setDescription("Обновление описания");
         fileBackedTaskManager.updateEpic(epic);
 
-        FileBackedTaskManager loadedManager = CSVFormat.loadFromFile(file);
+        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic updated = loadedManager.getEpic(epic.getId());
 
         assertEquals("Обновление названия", updated.getName());

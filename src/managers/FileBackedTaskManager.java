@@ -4,13 +4,13 @@ import exceptions.ManagerSaveException;
 import model.Epic;
 import model.SubTask;
 import model.Task;
-import utils.CSVFormat;
 
 import java.io.*;
 import java.util.*;
 
 import static enums.TaskStatus.DONE;
 import static enums.TaskStatus.IN_PROGRESS;
+import static utils.CSVFormat.fromString;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -42,6 +42,37 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось сохранить задачи: " + e.getMessage());
         }
+    }
+
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager fileBackedTaskManager;
+        try (FileReader fileReader = new FileReader(file);
+             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+            fileBackedTaskManager = new FileBackedTaskManager(file);
+            while (bufferedReader.ready()) {
+                String taskString = bufferedReader.readLine();
+                if (!taskString.equals("id,type,name,description,status,epic")) {
+                    String[] arrayTaskString = taskString.split(",");
+                    switch (arrayTaskString[1]) {
+                        case "TASK_TYPE":
+                            fileBackedTaskManager.getTasks().put(Integer.parseInt(arrayTaskString[0]),
+                                    fromString(taskString));
+                            break;
+                        case "EPIC_TYPE":
+                            fileBackedTaskManager.getEpics().put(Integer.parseInt(arrayTaskString[0]),
+                                    (Epic) fromString(taskString));
+                            break;
+                        case "SUBTASK_TYPE":
+                            fileBackedTaskManager.getSubTasks().put(Integer.parseInt(arrayTaskString[0]),
+                                    (SubTask) fromString(taskString));
+                            break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return fileBackedTaskManager;
     }
 
     @Override
@@ -150,7 +181,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         System.out.println("-".repeat(50));
 
-        FileBackedTaskManager fileBackedTaskManager2 = CSVFormat.loadFromFile(file1);
+        FileBackedTaskManager fileBackedTaskManager2 = FileBackedTaskManager.loadFromFile(file1);
 
         printAllTasks(fileBackedTaskManager2);
 
