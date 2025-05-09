@@ -1,11 +1,22 @@
 package model;
 
+import enums.TaskStatus;
+
+import static enums.TaskType.SUBTASK_TYPE;
+
 public class SubTask extends Task {
 
     private int epicId;
 
     public SubTask(String name, String description, int epicId) {
         super(name, description);
+        this.type = SUBTASK_TYPE;
+        this.epicId = epicId;
+    }
+
+    public SubTask(String name, String description, TaskStatus taskStatus, int epicId) {
+        super(name, description, taskStatus);
+        this.type = SUBTASK_TYPE;
         this.epicId = epicId;
     }
 
@@ -19,11 +30,12 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask {" +
-                " id=" + super.getId() +
-                ", name='" + super.getName() + '\'' +
-                ", description='" + super.getDescription() + '\'' +
-                ", taskStatus=" + super.getTaskStatus() +
-                ", epicId=" + epicId + " }";
+        return super.getId() +
+                "," + super.getType() +
+                "," + super.getName() +
+                "," + super.getDescription() +
+                "," + super.getTaskStatus() +
+                "," + epicId;
     }
+
 }

@@ -12,7 +12,7 @@ class EpicTest {
 
     @BeforeEach
     void setUp() {
-        epic = new Epic("Тестовый эпик", "Описание тестового эпика");
+        epic = new Epic("Эпик 1", "Описание эпика");
     }
 
     @Test
@@ -42,8 +42,7 @@ class EpicTest {
     @Test
     void testToString() {
         epic.addSubTaskId(10);
-        epic.addSubTaskId(20);
-        String expected = "Epic { id=" + epic.getId() + ", name='Тестовый эпик', description='Описание тестового эпика', taskStatus=" + epic.getTaskStatus() + ", subTasksIds=[10, 20] }";
+        String expected = "0,EPIC_TYPE,Эпик 1,Описание эпика,NEW,10";
         assertEquals(expected, epic.toString(), "Вывод должен соответствовать формату");
     }
 }

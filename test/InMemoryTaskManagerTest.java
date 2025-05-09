@@ -57,7 +57,7 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldReturnEpicById() {
         Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
-        Epic fetchedEpic = (Epic) taskManager.getEpic(epic.getId());
+        Epic fetchedEpic = taskManager.getEpic(epic.getId());
 
         assertNotNull(fetchedEpic);
         assertEquals(epic, fetchedEpic);
@@ -67,7 +67,7 @@ class InMemoryTaskManagerTest {
     void shouldReturnSubTaskById() {
         Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
         SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи", epic.getId());
-        SubTask fetchedSubTask = (SubTask) taskManager.getSubTask(subTask.getId());
+        SubTask fetchedSubTask = taskManager.getSubTask(subTask.getId());
 
         assertNotNull(fetchedSubTask);
         assertEquals(subTask, fetchedSubTask);

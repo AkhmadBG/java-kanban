@@ -1,20 +1,32 @@
 package model;
 
-import managers.TaskStatus;
+import enums.TaskType;
+import enums.TaskStatus;
 
 import java.util.Objects;
+
+import static enums.TaskType.TASK_TYPE;
 
 public class Task implements Cloneable {
 
     protected int id;
+    protected TaskType type;
     protected String name;
-    protected String description;
     protected TaskStatus taskStatus;
+    protected String description;
 
     public Task(String name, String description) {
+        this.type = TASK_TYPE;
         this.name = name;
         this.description = description;
         this.taskStatus = TaskStatus.NEW;
+    }
+
+    public Task(String name, String description, TaskStatus taskStatus) {
+        this.type = TASK_TYPE;
+        this.name = name;
+        this.description = description;
+        this.taskStatus = taskStatus;
     }
 
     public int getId() {
@@ -23,6 +35,10 @@ public class Task implements Cloneable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     public String getName() {
@@ -64,12 +80,12 @@ public class Task implements Cloneable {
 
     @Override
     public String toString() {
-        return "Task {" +
-                " id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", taskStatus=" + taskStatus +
-                " }";
+        return id +
+                "," + type +
+                "," + name +
+                "," + description +
+                "," + taskStatus;
+
     }
 
     @Override
@@ -81,4 +97,5 @@ public class Task implements Cloneable {
             throw new AssertionError();
         }
     }
+
 }

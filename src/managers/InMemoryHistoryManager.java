@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-//    Правильно ли я понял, что необходимо удалить полностью класс CustomLinkedList,
-//    который у меня был, а его функционал реализовать в этом классе?
-//    Для соблюдения порядка в истории просмотров от новых к старым применил LinkedHashMap
     private final Map<Integer, Node<Task>> history = new LinkedHashMap<>();
 
     @Override

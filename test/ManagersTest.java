@@ -33,4 +33,5 @@ class ManagersTest {
         assertEquals(epic, taskManager.getEpic(2), "Должен вернуть созданный эпик");
         assertEquals(subTask, taskManager.getSubTask(3), "Должен вернуть созданную подзадачу");
     }
+
 }

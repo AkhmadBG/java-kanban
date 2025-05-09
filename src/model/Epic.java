@@ -1,6 +1,10 @@
 package model;
 
+import enums.TaskStatus;
+
 import java.util.ArrayList;
+
+import static enums.TaskType.EPIC_TYPE;
 
 public class Epic extends Task {
 
@@ -8,6 +12,13 @@ public class Epic extends Task {
 
     public Epic(String name, String description) {
         super(name, description);
+        this.type = EPIC_TYPE;
+        this.subTasksIds = new ArrayList<>();
+    }
+
+    public Epic(String name, String description, TaskStatus taskStatus) {
+        super(name, description, taskStatus);
+        this.type = EPIC_TYPE;
         this.subTasksIds = new ArrayList<>();
     }
 
@@ -32,11 +43,21 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic {" +
-                " id=" + super.getId() +
-                ", name='" + super.getName() + '\'' +
-                ", description='" + super.getDescription() + '\'' +
-                ", taskStatus=" + super.getTaskStatus() +
-                ", subTasksIds=" + subTasksIds + " }";
+        String subTasksIdsToString = "";
+        StringBuilder sb = new StringBuilder(subTasksIdsToString);
+        for (Integer subTaskId : subTasksIds) {
+            sb.append(subTaskId);
+            if (subTasksIds.contains((subTaskId + 1))) {
+                sb.append("/");
+            }
+        }
+        subTasksIdsToString = sb.toString();
+        return super.getId() +
+                "," + super.getType() +
+                "," + super.getName() +
+                "," + super.getDescription() +
+                "," + super.getTaskStatus() +
+                "," + subTasksIdsToString;
     }
+
 }

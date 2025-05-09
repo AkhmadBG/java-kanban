@@ -10,7 +10,7 @@ class SubTaskTest {
 
     @BeforeEach
     void setUp() {
-        subTask = new SubTask("Тестовая подзадача", "Описание тестовой подзадачи", 1);
+        subTask = new SubTask("Подзадача 1", "Описание подзадачи", 1);
     }
 
     @Test
@@ -26,7 +26,7 @@ class SubTaskTest {
 
     @Test
     void testToString() {
-        String expected = "SubTask { id=" + subTask.getId() + ", name='Тестовая подзадача', description='Описание тестовой подзадачи', taskStatus=" + subTask.getTaskStatus() + ", epicId=1 }";
+        String expected = "0,SUBTASK_TYPE,Подзадача 1,Описание подзадачи,NEW,1";
         assertEquals(expected, subTask.toString(), "Вывод должен соответствовать формату");
     }
 }
