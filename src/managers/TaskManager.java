@@ -4,16 +4,19 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface TaskManager {
 
-    Task createTask(String name, String description);
+    Task createTask(String name, String description, Duration duration, LocalDateTime startTime);
 
     Epic createEpic(String name, String description);
 
-    SubTask createSubTask(String name, String description, int epicId);
+    SubTask createSubTask(String name, String description, Duration duration, LocalDateTime startTime, int epicId);
 
     Task getTask(int taskId);
 
@@ -22,6 +25,8 @@ public interface TaskManager {
     SubTask getSubTask(int subTaskId);
 
     List<Task> getAllTasks();
+
+    Set<Task> getPrioritisedTasks();
 
     List<SubTask> getAllSubTasksInEpic(int epicId);
 

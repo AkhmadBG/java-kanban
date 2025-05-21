@@ -3,9 +3,12 @@ package model;
 import enums.TaskType;
 import enums.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static enums.TaskType.TASK_TYPE;
+import static utils.AppConstants.DATE_TIME_FORMATTER;
 
 public class Task implements Cloneable {
 
@@ -14,19 +17,27 @@ public class Task implements Cloneable {
     protected String name;
     protected TaskStatus taskStatus;
     protected String description;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
         this.type = TASK_TYPE;
         this.name = name;
         this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
         this.taskStatus = TaskStatus.NEW;
     }
 
-    public Task(String name, String description, TaskStatus taskStatus) {
-        this.type = TASK_TYPE;
+    public Task(String name, String description, TaskStatus taskStatus, Duration duration, LocalDateTime startTime) {
+        this(name, description, duration, startTime);
+        this.taskStatus = taskStatus;
+    }
+
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.taskStatus = taskStatus;
+        this.taskStatus = TaskStatus.NEW;
     }
 
     public int getId() {
@@ -65,6 +76,26 @@ public class Task implements Cloneable {
         this.taskStatus = taskStatus;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,7 +115,10 @@ public class Task implements Cloneable {
                 "," + type +
                 "," + name +
                 "," + description +
-                "," + taskStatus;
+                "," + taskStatus +
+                "," + duration.toMinutes() +
+                "," + startTime.format(DATE_TIME_FORMATTER) +
+                "," + getEndTime().format(DATE_TIME_FORMATTER);
 
     }
 

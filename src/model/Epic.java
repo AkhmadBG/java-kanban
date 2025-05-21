@@ -1,25 +1,33 @@
 package model;
 
-import enums.TaskStatus;
-
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static enums.TaskType.EPIC_TYPE;
+import static utils.AppConstants.*;
 
 public class Epic extends Task {
 
     private ArrayList<Integer> subTasksIds;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
-        this.type = EPIC_TYPE;
+        super.type = EPIC_TYPE;
+        super.duration = Duration.ZERO;
+        super.startTime = DEFAULT_DATE_TO_EPIC_START;
+        this.endTime = DEFAULT_DATE_TO_EPIC_END;
         this.subTasksIds = new ArrayList<>();
     }
 
-    public Epic(String name, String description, TaskStatus taskStatus) {
-        super(name, description, taskStatus);
-        this.type = EPIC_TYPE;
-        this.subTasksIds = new ArrayList<>();
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public ArrayList<Integer> getSubTasksIds() {
@@ -52,12 +60,26 @@ public class Epic extends Task {
             }
         }
         subTasksIdsToString = sb.toString();
-        return super.getId() +
-                "," + super.getType() +
-                "," + super.getName() +
-                "," + super.getDescription() +
-                "," + super.getTaskStatus() +
-                "," + subTasksIdsToString;
+        if (!subTasksIdsToString.equals("")) {
+            return super.getId() +
+                    "," + super.getType() +
+                    "," + super.getName() +
+                    "," + super.getDescription() +
+                    "," + super.getTaskStatus() +
+                    "," + super.getDuration().toMinutes() +
+                    "," + super.getStartTime().format(DATE_TIME_FORMATTER) +
+                    "," + endTime.format(DATE_TIME_FORMATTER) +
+                    "," + subTasksIdsToString;
+        } else {
+            return super.getId() +
+                    "," + super.getType() +
+                    "," + super.getName() +
+                    "," + super.getDescription() +
+                    "," + super.getTaskStatus() +
+                    "," + super.getDuration().toMinutes() +
+                    "," + super.getStartTime().format(DATE_TIME_FORMATTER) +
+                    "," + endTime.format(DATE_TIME_FORMATTER);
+        }
     }
 
 }
