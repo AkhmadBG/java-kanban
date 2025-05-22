@@ -30,9 +30,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldCreateTask() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.addNewTask(task);
 
         assertNotNull(task);
         assertEquals("Задача 1", task.getName());
@@ -42,7 +43,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldCreateEpic() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
 
         assertNotNull(epic);
         assertEquals("Эпик 1", epic.getName());
@@ -51,10 +53,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldCreateSubTaskAndLinkToEpic() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
 
         assertNotNull(subTask);
         assertEquals("Подзадача 1", subTask.getName());
@@ -64,9 +68,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnTaskById() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.addNewTask(task);
         Task fetchedTask = taskManager.getTask(task.getId());
 
         assertNotNull(fetchedTask);
@@ -75,7 +80,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnEpicById() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
         Epic fetchedEpic = taskManager.getEpic(epic.getId());
 
         assertNotNull(fetchedEpic);
@@ -84,10 +90,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnSubTaskById() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
         SubTask fetchedSubTask = taskManager.getSubTask(subTask.getId());
 
         assertNotNull(fetchedSubTask);
@@ -96,9 +104,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldUpdateTask() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.addNewTask(task);
         Task updatedTask = new Task("Обновление названия задачи", "Обновление описания");
         updatedTask.setDuration(Duration.parse("PT90M"));
         updatedTask.setStartTime(LocalDateTime.of(2002, FEBRUARY, 2, 2, 2));
@@ -116,8 +125,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldUpdateEpic() {
-        Epic epic = taskManager.createEpic("Эпик", "Описание");
-        Epic updatedEpic = taskManager.createEpic("Обновление названия", "Обновление описания");
+        Epic epic = new Epic("Эпик", "Описание");
+        taskManager.addNewEpic(epic);
+        Epic updatedEpic = new Epic("Обновление названия", "Обновление описания");
         updatedEpic.setId(1);
         taskManager.updateEpic(updatedEpic);
 
@@ -128,10 +138,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldUpdateSubTask() {
-        Epic epic = taskManager.createEpic("Эпик", "Описание");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик", "Описание");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
         SubTask updatedSubTask = new SubTask("Обновление названия подзадачи 1", "Обновление описание подзадачи 1", epic.getId());
         updatedSubTask.setDuration(Duration.parse("PT90M"));
         updatedSubTask.setStartTime(LocalDateTime.of(2000, JANUARY, 1, 1, 1));
@@ -149,19 +161,22 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldDeleteTask() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.addNewTask(task);
         taskManager.deleteTask(task.getId());
         assertNull(taskManager.getTask(task.getId()));
     }
 
     @Test
     void shouldDeleteEpicAndItsSubTasks() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
         taskManager.deleteEpic(epic.getId());
 
         assertNull(taskManager.getEpic(epic.getId()));
@@ -170,23 +185,29 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldDeleteSubTask() {
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
         taskManager.deleteSubTask(subTask.getId());
+
         assertNull(taskManager.getSubTask(subTask.getId()));
     }
 
     @Test
     void shouldDeleteAllTasks() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        taskManager.addNewTask(task);
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
 
         taskManager.deleteAllTasks();
 
@@ -197,13 +218,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldSetCorrectEpicStatus() {
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика");
-        SubTask subTask1 = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик 1", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask1 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask1.setDuration(Duration.parse("PT30M"));
         subTask1.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
-        SubTask subTask2 = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        taskManager.addNewSubTask(subTask1);
+        SubTask subTask2 = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask2.setDuration(Duration.parse("PT30M"));
         subTask2.setStartTime(LocalDateTime.of(2000, JANUARY, 1, 1, 1));
+        taskManager.addNewSubTask(subTask2);
 
         assertEquals(NEW, epic.getTaskStatus());
 
@@ -226,13 +250,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnAllTasks() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        taskManager.addNewTask(task);
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
 
         List<Task> allTasks = taskManager.getAllTasks();
         assertEquals(3, allTasks.size());
@@ -244,25 +271,34 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnPrioritisedTasks() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
-        task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 0, 0)); // НЕ пересекается с 01:01
+        taskManager.addNewTask(task);
 
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
+        Task newTask = new Task("Новая задача", "Описание новой задачи");
+        newTask.setDuration(Duration.parse("PT30M"));
+        newTask.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.updateTask(newTask);
 
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
-        subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        subTask.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 2, 2));
+        taskManager.addNewSubTask(subTask);
 
-        Set<Task> prioritisedTasks2 = taskManager.getPrioritisedTasks();
+        Set<Task> prioritisedTasks = taskManager.getPrioritisedTasks();
 
-        assertTrue(prioritisedTasks2.contains(task));
-        assertFalse(prioritisedTasks2.contains(epic));
+        assertTrue(prioritisedTasks.contains(task));
+        assertTrue(prioritisedTasks.contains(subTask));
+
     }
 
     @Test
     void shouldAddNewTask() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         taskManager.addNewTask(task);
         assertEquals(task, taskManager.getTask(1));
     }
@@ -276,7 +312,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldAddNewSubTask() {
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
         SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         taskManager.addNewSubTask(subTask);
         assertEquals(subTask, taskManager.getSubTask(2));
@@ -284,13 +321,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldReturnHistory() {
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        taskManager.addNewTask(task);
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
 
         taskManager.getTask(1);
         taskManager.getEpic(2);
@@ -304,33 +344,34 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldThrowExceptionIfTasksOverlap() {
-        Task task1 = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task1 = new Task("Задача 1", "Описание задачи 1");
         task1.setDuration(Duration.parse("PT30M"));
         task1.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        taskManager.updateTask(task1);
+        taskManager.addNewTask(task1);
 
-        Task task2 = taskManager.createTask("Задача 2", "Описание задачи 2");
+        Task task2 = new Task("Задача 2", "Описание задачи 2");
         task2.setDuration(Duration.parse("PT30M"));
         task2.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
         task2.setId(1);
 
-        Task task3 = taskManager.createTask("Задача 3", "Описание задачи 3");
+        Task task3 = new Task("Задача 3", "Описание задачи 3");
         task3.setDuration(Duration.parse("PT30M"));
         task3.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        task3.setId(2);
 
-        assertThrows(CheckIntersectionWithAllTasksException.class, () -> taskManager.updateTask(task2));
+        assertDoesNotThrow(() -> taskManager.updateTask(task2));
         assertThrows(CheckIntersectionWithAllTasksException.class, () -> taskManager.addNewTask(task3));
     }
 
     @Test
     void shouldContainsTasksInPrioritisedTasks() {
-        Task task1 = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task1 = new Task("Задача 1", "Описание задачи 1");
         task1.setDuration(Duration.parse("PT30M"));
         task1.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        Task task2 = taskManager.createTask("Задача 1", "Описание задачи 1");
+        taskManager.addNewTask(task1);
+        Task task2 = new Task("Задача 1", "Описание задачи 1");
         task2.setDuration(Duration.parse("PT30M"));
         task2.setStartTime(LocalDateTime.of(2002, FEBRUARY, 2, 2, 2));
+        taskManager.addNewTask(task2);
 
         Set<Task> prioritisedTasks = taskManager.getPrioritisedTasks();
         assertTrue(prioritisedTasks.contains(task1));

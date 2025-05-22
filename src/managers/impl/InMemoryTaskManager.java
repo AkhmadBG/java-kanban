@@ -27,42 +27,6 @@ public class InMemoryTaskManager implements TaskManager {
             .comparing(Task::getStartTime));
 
     @Override
-    public Task createTask(String name, String description) {
-        Task task = new Task(name, description);
-        task.setId(++identifier);
-        if (checkIntersectionWithAllTasks(task)) return null;
-        tasks.put(identifier, task);
-        if (task.getStartTime() != null) {
-            allTasksSortList.add(task);
-        }
-        return task;
-    }
-
-    @Override
-    public Epic createEpic(String name, String description) {
-        Epic epic = new Epic(name, description);
-        epic.setId(++identifier);
-        epics.put(identifier, epic);
-        return epic;
-    }
-
-    @Override
-    public SubTask createSubTask(String name, String description, int epicId) {
-        SubTask subTask = new SubTask(name, description, epicId);
-        subTask.setId(++identifier);
-        if (checkIntersectionWithAllTasks(subTask)) return null;
-        subTasks.put(identifier, subTask);
-        Epic epic = epics.get(epicId);
-        epic.addSubTaskId(subTask.getId());
-        updateEpicStatus(epic);
-        updateEpicsDurationStartEndDate(epic);
-        if (subTask.getStartTime() != null) {
-            allTasksSortList.add(subTask);
-        }
-        return subTask;
-    }
-
-    @Override
     public Task getTask(int taskId) {
         if (tasks.containsKey(taskId)) {
             Task task = tasks.get(taskId);
@@ -204,8 +168,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task addNewTask(Task task) {
-        allTasksSortList.remove(task);
         if (checkIntersectionWithAllTasks(task)) return null;
+        allTasksSortList.remove(task);
         task.setId(++identifier);
         tasks.put(task.getId(), task);
         if (task.getStartTime() != null) {
@@ -224,8 +188,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask addNewSubTask(SubTask subTask) {
-        allTasksSortList.remove(subTask);
         if (checkIntersectionWithAllTasks(subTask)) return null;
+        allTasksSortList.remove(subTask);
         subTask.setId(++identifier);
         epics.get(subTask.getEpicId()).addSubTaskId(subTask.getId());
         subTasks.put(subTask.getId(), subTask);

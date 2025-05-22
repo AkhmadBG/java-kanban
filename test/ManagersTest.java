@@ -18,9 +18,10 @@ class ManagersTest {
     @Test
     void shouldGetDefaultInMemoryTaskManager() {
         TaskManager taskManager = Managers.getDefault();
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        taskManager.addNewTask(task);
 
         assertEquals(task, taskManager.getTask(1), "Должен вернуть созданную задачу");
     }
@@ -29,13 +30,20 @@ class ManagersTest {
     void shouldGetDefaultInMemoryHistoryManager() {
         HistoryManager historyManager = Managers.getDefaultHistory();
         TaskManager taskManager = Managers.getDefault();
-        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+
+        Task task = new Task("Задача 1", "Описание задачи 1");
         task.setDuration(Duration.parse("PT30M"));
         task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
-        Epic epic = taskManager.createEpic("Эпик 1", "Описание эпика 1");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        taskManager.addNewTask(task);
+
+        Epic epic = new Epic("Эпик 1", "Описание эпика 1");
+        taskManager.addNewEpic(epic);
+
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", 2);
         subTask.setDuration(Duration.parse("PT30M"));
         subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
+
         historyManager.add(task);
         historyManager.add(epic);
         historyManager.add(subTask);

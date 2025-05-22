@@ -10,12 +10,6 @@ import java.util.Set;
 
 public interface TaskManager {
 
-    Task createTask(String name, String description);
-
-    Epic createEpic(String name, String description);
-
-    SubTask createSubTask(String name, String description, int epicId);
-
     Task getTask(int taskId);
 
     Epic getEpic(int epicId);
