@@ -23,14 +23,12 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    Comparator<Task> startTimeComparator = Comparator
-            .comparing(Task::getStartTime);
-
-    protected Set<Task> allTasksSortList = new TreeSet<>(startTimeComparator);
+    public Set<Task> allTasksSortList = new TreeSet<>(Comparator
+            .comparing(Task::getStartTime));
 
     @Override
-    public Task createTask(String name, String description, Duration duration, LocalDateTime startTime) {
-        Task task = new Task(name, description, duration, startTime);
+    public Task createTask(String name, String description) {
+        Task task = new Task(name, description);
         task.setId(++identifier);
         if (checkIntersectionWithAllTasks(task)) return null;
         tasks.put(identifier, task);
@@ -49,8 +47,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask createSubTask(String name, String description, Duration duration, LocalDateTime startTime, int epicId) {
-        SubTask subTask = new SubTask(name, description, duration, startTime, epicId);
+    public SubTask createSubTask(String name, String description, int epicId) {
+        SubTask subTask = new SubTask(name, description, epicId);
         subTask.setId(++identifier);
         if (checkIntersectionWithAllTasks(subTask)) return null;
         subTasks.put(identifier, subTask);
@@ -122,6 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task updateTask(Task task) {
         if (!tasks.containsKey(task.getId())) return null;
         allTasksSortList.remove(tasks.get(task.getId()));
+        tasks.remove(task.getId());
         if (checkIntersectionWithAllTasks(task)) return null;
         tasks.put(task.getId(), task);
         if (task.getStartTime() != null) {
@@ -133,7 +132,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic updateEpic(Epic newEpic) {
         Epic epic = epics.get(newEpic.getId());
-        if (checkIntersectionWithAllTasks(newEpic)) return null;
         if (epics.containsKey(newEpic.getId())) {
             epic.setName(newEpic.getName());
             epic.setDescription(newEpic.getDescription());
@@ -143,16 +141,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask updateSubTask(SubTask subTask) {
+        if (!subTasks.containsKey(subTask.getId())) return null;
         allTasksSortList.remove(subTasks.get(subTask.getId()));
+        subTasks.remove(subTask.getId());
         if (checkIntersectionWithAllTasks(subTask)) return null;
-        if (subTasks.containsKey(subTask.getId())) {
-            subTasks.put(subTask.getId(), subTask);
-            Epic epic = epics.get(subTasks.get(subTask.getId()).getEpicId());
-            updateEpicStatus(epic);
-            updateEpicsDurationStartEndDate(epic);
-            if (subTask.getStartTime() != null) {
-                allTasksSortList.add(subTask);
-            }
+        subTasks.put(subTask.getId(), subTask);
+        Epic epic = epics.get(subTasks.get(subTask.getId()).getEpicId());
+        updateEpicStatus(epic);
+        updateEpicsDurationStartEndDate(epic);
+        if (subTask.getStartTime() != null) {
+            allTasksSortList.add(subTask);
         }
         return subTask;
     }
@@ -310,12 +308,12 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setDuration(duration);
     }
 
-    public boolean checkIntersectionTwoTasks(Task task1, Task task2) {
+    private boolean checkIntersectionTwoTasks(Task task1, Task task2) {
         return task1.getStartTime().isBefore(task2.getEndTime()) &&
                 task2.getStartTime().isBefore(task1.getEndTime());
     }
 
-    public boolean checkIntersectionWithAllTasks(Task checkTask) {
+    private boolean checkIntersectionWithAllTasks(Task checkTask) {
         boolean flag = false;
         for (Task task : getPrioritisedTasks()) {
             if (checkIntersectionTwoTasks(task, checkTask))

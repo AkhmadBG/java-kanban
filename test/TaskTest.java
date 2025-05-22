@@ -16,10 +16,9 @@ class TaskTest {
 
     @BeforeEach
     void setUp() {
-        task = new Task("Задача 1",
-                "Описание задачи 1",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        task = new Task("Задача 1", "Описание задачи 1");
+        task.setDuration(Duration.parse("PT30M"));
+        task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
     }
 
     @Test

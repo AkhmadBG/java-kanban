@@ -28,8 +28,11 @@ public class CSVFormat {
 
         switch (taskType) {
             case TASK_TYPE:
-                Task task = new Task(name, description, taskStatus, duration, startTime);
+                Task task = new Task(name, description);
                 task.setId(id);
+                task.setTaskStatus(taskStatus);
+                task.setDuration(duration);
+                task.setStartTime(startTime);
                 return task;
             case EPIC_TYPE:
                 Epic epic = new Epic(name, description);
@@ -49,9 +52,11 @@ public class CSVFormat {
                 epic.setId(id);
                 return epic;
             case SUBTASK_TYPE:
-                SubTask subTask = new SubTask(name, description, taskStatus, duration, startTime,
-                        Integer.parseInt(arrayTaskString[8]));
+                SubTask subTask = new SubTask(name, description, Integer.parseInt(arrayTaskString[8]));
                 subTask.setId(id);
+                subTask.setTaskStatus(taskStatus);
+                subTask.setDuration(duration);
+                subTask.setStartTime(startTime);
                 return subTask;
             default:
                 return null;

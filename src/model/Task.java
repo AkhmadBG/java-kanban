@@ -20,24 +20,13 @@ public class Task implements Cloneable {
     protected Duration duration;
     protected LocalDateTime startTime;
 
-    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+    public Task(String name, String description) {
         this.type = TASK_TYPE;
         this.name = name;
-        this.description = description;
-        this.duration = duration;
-        this.startTime = startTime;
         this.taskStatus = TaskStatus.NEW;
-    }
-
-    public Task(String name, String description, TaskStatus taskStatus, Duration duration, LocalDateTime startTime) {
-        this(name, description, duration, startTime);
-        this.taskStatus = taskStatus;
-    }
-
-    public Task(String name, String description) {
-        this.name = name;
         this.description = description;
-        this.taskStatus = TaskStatus.NEW;
+        this.duration = Duration.ofMinutes(5);
+        this.startTime = LocalDateTime.now();
     }
 
     public int getId() {

@@ -87,8 +87,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createTask(String name, String description, Duration duration, LocalDateTime startTime) {
-        Task task = super.createTask(name, description, duration, startTime);
+    public Task createTask(String name, String description) {
+        Task task = super.createTask(name, description);
         save();
         return task;
     }
@@ -101,8 +101,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public SubTask createSubTask(String name, String description, Duration duration, LocalDateTime startTime, int epicId) {
-        SubTask subTask = super.createSubTask(name, description, duration, startTime, epicId);
+    public SubTask createSubTask(String name, String description, int epicId) {
+        SubTask subTask = super.createSubTask(name, description, epicId);
         save();
         return subTask;
     }
@@ -157,31 +157,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager fileBackedTaskManager1 = new FileBackedTaskManager(file1);
 
         // Создание первой задачи
-        fileBackedTaskManager1.createTask("Задача 1",
-                "Описание задачи 1",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        Task task1 = fileBackedTaskManager1.createTask("Задача 1", "Описание задачи 1");
+        task1.setDuration(Duration.parse("PT30M"));
+        task1.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
 
         // Создание первого эпика
-        fileBackedTaskManager1.createEpic("Эпик 1", "Описание эпика 1");
+        Epic epic1 = fileBackedTaskManager1.createEpic("Эпик 1", "Описание эпика 1");
 
         // Создание первой подзадачи
-        fileBackedTaskManager1.createSubTask("Подзадача 1",
-                "Описание подзадачи 1",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(1999, DECEMBER, 31, 5, 5), 2);
+        SubTask subTask1 = fileBackedTaskManager1.createSubTask("Подзадача 1", "Описание подзадачи 1", 2);
+        subTask1.setDuration(Duration.parse("PT30M"));
+        subTask1.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
 
         // Создание второй подзадачи
-        fileBackedTaskManager1.createSubTask("Подзадача 2",
-                "Описание подзадачи 2",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(2003, MARCH, 3, 3, 3), 2);
+        SubTask subTask2 = fileBackedTaskManager1.createSubTask("Подзадача 2", "Описание подзадачи 2", 2);
+        subTask2.setDuration(Duration.parse("PT30M"));
+        subTask2.setStartTime(LocalDateTime.of(2003, MARCH, 3, 3, 3));
 
         // Создание третьей подзадачи
-        fileBackedTaskManager1.createSubTask("Подзадача 3",
-                "Описание подзадачи 3",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(2010, JANUARY, 1, 0, 0), 2);
+        SubTask subTask3 = fileBackedTaskManager1.createSubTask("Подзадача 3", "Описание подзадачи 3", 2);
+        subTask3.setDuration(Duration.parse("PT30M"));
+        subTask3.setStartTime(LocalDateTime.of(2010, JANUARY, 1, 0, 0));
 
         // Получение задач для формирования истории fileBackedTaskManager1
         fileBackedTaskManager1.getTask(1);
@@ -198,46 +194,41 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 .forEach(System.out::println);
 
         // Обновление первой задачи
-        Task task = new Task("Обновление задачи 1",
-                "Обновление описания задачи 1",
-                IN_PROGRESS,
-                Duration.parse("PT90M"),
-                LocalDateTime.of(2025, DECEMBER, 10, 20, 5));
-        task.setId(1);
-        fileBackedTaskManager1.updateTask(task);
+        Task updatedTask = new Task("Обновление задачи 1", "Обновление описания задачи 1");
+        updatedTask.setTaskStatus(IN_PROGRESS);
+        updatedTask.setDuration(Duration.parse("PT90M"));
+        updatedTask.setStartTime(LocalDateTime.of(2025, DECEMBER, 10, 20, 5));
+        updatedTask.setId(1);
+        fileBackedTaskManager1.updateTask(updatedTask);
 
         // Обновление первого эпика
-        Epic epic = new Epic("Обновление эпика 1",
-                "Обновление описания эпика 1");
-        epic.setId(2);
-        fileBackedTaskManager1.updateEpic(epic);
+        Epic updatedEpic = new Epic("Обновление эпика 1", "Обновление описания эпика 1");
+        updatedEpic.setId(2);
+        fileBackedTaskManager1.updateEpic(updatedEpic);
 
         // Обновление первой подзадачи
-        SubTask subTask1 = new SubTask("Обновление подзадачи 1",
-                "Обновление описания подзадачи 1",
-                DONE,
-                Duration.parse("PT100M"),
-                LocalDateTime.of(2027, MAY, 11, 11, 11), 2);
-        subTask1.setId(3);
-        fileBackedTaskManager1.updateSubTask(subTask1);
+        SubTask updatedSubTask1 = new SubTask("Обновление подзадачи 1", "Обновление описания подзадачи 1", 2);
+        updatedSubTask1.setTaskStatus(DONE);
+        updatedSubTask1.setDuration(Duration.parse("PT100M"));
+        updatedSubTask1.setStartTime(LocalDateTime.of(2027, MAY, 11, 11, 11));
+        updatedSubTask1.setId(3);
+        fileBackedTaskManager1.updateSubTask(updatedSubTask1);
 
         // Обновление второй подзадачи
-        SubTask subTask2 = new SubTask("Обновление подзадачи 2",
-                "Обновление описания подзадачи 2",
-                DONE,
-                Duration.parse("PT100M"),
-                LocalDateTime.of(2026, JULY, 11, 11, 11), 2);
-        subTask2.setId(4);
-        fileBackedTaskManager1.updateSubTask(subTask2);
+        SubTask updatedSubTask2 = new SubTask("Обновление подзадачи 2", "Обновление описания подзадачи 2", 2);
+        updatedSubTask2.setTaskStatus(DONE);
+        updatedSubTask2.setDuration(Duration.parse("PT100M"));
+        updatedSubTask2.setStartTime(LocalDateTime.of(2026, JULY, 11, 11, 11));
+        updatedSubTask2.setId(4);
+        fileBackedTaskManager1.updateSubTask(updatedSubTask2);
 
         // Обновление третьей подзадачи
-        SubTask subTask3 = new SubTask("Обновление подзадачи 3",
-                "Обновление описания подзадачи 3",
-                DONE,
-                Duration.parse("PT100M"),
-                LocalDateTime.of(2028, JUNE, 11, 11, 11), 2);
-        subTask3.setId(5);
-        fileBackedTaskManager1.updateSubTask(subTask3);
+        SubTask updatedSubTask3 = new SubTask("Обновление подзадачи 3", "Обновление описания подзадачи 3", 2);
+        updatedSubTask3.setTaskStatus(DONE);
+        updatedSubTask3.setDuration(Duration.parse("PT100M"));
+        updatedSubTask3.setStartTime(LocalDateTime.of(2028, JUNE, 11, 11, 11));
+        updatedSubTask3.setId(5);
+        fileBackedTaskManager1.updateSubTask(updatedSubTask3);
 
         System.out.println("-".repeat(50));
 

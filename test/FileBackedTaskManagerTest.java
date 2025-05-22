@@ -38,10 +38,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
 
     @Test
     void shouldSaveAndLoadTask() {
-        Task task = taskManager.createTask("Задача 1",
-                "Описание задачи 1",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(2001, JANUARY, 1, 1, 1));
+        Task task = taskManager.createTask("Задача 1", "Описание задачи 1");
+        task.setDuration(Duration.parse("PT30M"));
+        task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
         task.setTaskStatus(IN_PROGRESS);
         taskManager.updateTask(task);
 
@@ -60,19 +59,17 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
     @Test
     void shouldSaveAndLoadEpicWithSubtask() {
         Epic epic = taskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = taskManager.createSubTask("Подзадача 1",
-                "Описание подзадачи 1",
-                Duration.parse("PT30M"),
-                LocalDateTime.of(1999, DECEMBER, 31, 5, 5), epic.getId());
+        SubTask subTask = taskManager.createSubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        subTask.setDuration(Duration.parse("PT30M"));
+        subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic loadedEpic = loadedManager.getEpic(epic.getId());
-        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(epic.getId());
+        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(loadedEpic.getId());
 
         assertNotNull(loadedEpic);
         assertEquals("Эпик", loadedEpic.getName());
         assertTrue(loadedEpic.getSubTasksIds().contains(subTask.getId()));
-
         assertEquals(1, loadedSubTasks.size());
         assertEquals("Подзадача 1", loadedSubTasks.get(0).getName());
     }
