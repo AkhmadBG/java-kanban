@@ -1,4 +1,4 @@
-import managers.FileBackedTaskManager;
+import managers.impl.FileBackedTaskManager;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -6,20 +6,22 @@ import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static enums.TaskStatus.*;
+import static java.time.Month.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest {
 
     private File file;
-    private FileBackedTaskManager fileBackedTaskManager;
 
     @BeforeEach
     void setup() throws IOException {
         file = File.createTempFile("taskmanager", ".csv");
-        fileBackedTaskManager = new FileBackedTaskManager(file);
+        taskManager = new FileBackedTaskManager(file);
     }
 
     @AfterEach
@@ -29,82 +31,49 @@ class FileBackedTaskManagerTest {
         }
     }
 
+    @Override
+    protected FileBackedTaskManager createTaskManager() {
+        return (FileBackedTaskManager) taskManager;
+    }
+
     @Test
     void shouldSaveAndLoadTask() {
-        Task task = fileBackedTaskManager.createTask("Задача", "Описание");
+        Task task = new Task("Задача 1", "Описание задачи 1");
+        task.setDuration(Duration.parse("PT30M"));
+        task.setStartTime(LocalDateTime.of(2001, JANUARY, 1, 1, 1));
         task.setTaskStatus(IN_PROGRESS);
-        fileBackedTaskManager.updateTask(task);
+        taskManager.addNewTask(task);
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Task loadedTask = loadedManager.getTask(task.getId());
 
         assertNotNull(loadedTask);
-        assertEquals("Задача", loadedTask.getName());
-        assertEquals("Описание", loadedTask.getDescription());
-        assertEquals(IN_PROGRESS, loadedTask.getTaskStatus());
+        assertEquals("Задача 1", loadedTask.getName());
+        assertEquals("Описание задачи 1", loadedTask.getDescription());
+        assertEquals(Duration.parse("PT30M"), task.getDuration());
+        assertEquals(LocalDateTime.of(2001, JANUARY, 1, 1, 1), task.getStartTime());
+        assertEquals(LocalDateTime.of(2001, JANUARY, 1, 1, 31), task.getEndTime());
+        assertEquals(IN_PROGRESS, task.getTaskStatus());
     }
 
     @Test
     void shouldSaveAndLoadEpicWithSubtask() {
-        Epic epic = fileBackedTaskManager.createEpic("Эпик", "Описание эпика");
-        SubTask subTask = fileBackedTaskManager.createSubTask("Подзадача", "Описание подзадачи", epic.getId());
+        Epic epic = new Epic("Эпик", "Описание эпика");
+        taskManager.addNewEpic(epic);
+        SubTask subTask = new SubTask("Подзадача 1", "Описание подзадачи 1", epic.getId());
+        subTask.setDuration(Duration.parse("PT30M"));
+        subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
+        taskManager.addNewSubTask(subTask);
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
         Epic loadedEpic = loadedManager.getEpic(epic.getId());
-        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(epic.getId());
+        List<SubTask> loadedSubTasks = loadedManager.getAllSubTasksInEpic(loadedEpic.getId());
 
         assertNotNull(loadedEpic);
         assertEquals("Эпик", loadedEpic.getName());
         assertTrue(loadedEpic.getSubTasksIds().contains(subTask.getId()));
-
         assertEquals(1, loadedSubTasks.size());
-        assertEquals("Подзадача", loadedSubTasks.get(0).getName());
+        assertEquals("Подзадача 1", loadedSubTasks.get(0).getName());
     }
 
-    @Test
-    void shouldUpdateTask() {
-        Task task = fileBackedTaskManager.createTask("Задача", "Описание");
-        task.setName("Обновление названия задачи");
-        task.setDescription("Обновление описания");
-        task.setTaskStatus(DONE);
-        fileBackedTaskManager.updateTask(task);
-
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
-        Task updated = loadedManager.getTask(task.getId());
-
-        assertEquals("Обновление названия задачи", updated.getName());
-        assertEquals("Обновление описания", updated.getDescription());
-        assertEquals(DONE, updated.getTaskStatus());
-    }
-
-    @Test
-    void shouldUpdateSubTask() {
-        Epic epic = fileBackedTaskManager.createEpic("Эпик", "Описание");
-        SubTask subTask = fileBackedTaskManager.createSubTask("Подзадача", "Описание", epic.getId());
-
-        subTask.setName("Обновление названия подзадачи");
-        subTask.setDescription("Обновление описания");
-        subTask.setTaskStatus(IN_PROGRESS);
-        fileBackedTaskManager.updateSubTask(subTask);
-
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
-        SubTask updated = loadedManager.getSubTask(subTask.getId());
-
-        assertEquals("Обновление названия подзадачи", updated.getName());
-        assertEquals(IN_PROGRESS, updated.getTaskStatus());
-    }
-
-    @Test
-    void shouldUpdateEpic() {
-        Epic epic = fileBackedTaskManager.createEpic("Эпик", "Описание");
-        epic.setName("Обновление названия");
-        epic.setDescription("Обновление описания");
-        fileBackedTaskManager.updateEpic(epic);
-
-        FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(file);
-        Epic updated = loadedManager.getEpic(epic.getId());
-
-        assertEquals("Обновление названия", updated.getName());
-        assertEquals("Обновление описания", updated.getDescription());
-    }
 }

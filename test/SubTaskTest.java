@@ -2,6 +2,10 @@ import model.SubTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import static java.time.Month.DECEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubTaskTest {
@@ -10,12 +14,15 @@ class SubTaskTest {
 
     @BeforeEach
     void setUp() {
-        subTask = new SubTask("Подзадача 1", "Описание подзадачи", 1);
+        subTask = new SubTask("Подзадача 1",
+                "Описание подзадачи 1", 2);
+        subTask.setDuration(Duration.parse("PT30M"));
+        subTask.setStartTime(LocalDateTime.of(1999, DECEMBER, 31, 5, 5));
     }
 
     @Test
     void testGetEpicId() {
-        assertEquals(1, subTask.getEpicId(), "Должно быть 1");
+        assertEquals(2, subTask.getEpicId(), "Должно быть 1");
     }
 
     @Test
@@ -26,7 +33,8 @@ class SubTaskTest {
 
     @Test
     void testToString() {
-        String expected = "0,SUBTASK_TYPE,Подзадача 1,Описание подзадачи,NEW,1";
+        String expected = "0,SUBTASK_TYPE,Подзадача 1,Описание подзадачи 1,NEW,30,05:05 31.12.1999,05:35 31.12.1999,2";
         assertEquals(expected, subTask.toString(), "Вывод должен соответствовать формату");
     }
+
 }

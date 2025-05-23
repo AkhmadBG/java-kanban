@@ -6,14 +6,9 @@ import model.Task;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface TaskManager {
-
-    Task createTask(String name, String description);
-
-    Epic createEpic(String name, String description);
-
-    SubTask createSubTask(String name, String description, int epicId);
 
     Task getTask(int taskId);
 
@@ -22,6 +17,8 @@ public interface TaskManager {
     SubTask getSubTask(int subTaskId);
 
     List<Task> getAllTasks();
+
+    Set<Task> getPrioritisedTasks();
 
     List<SubTask> getAllSubTasksInEpic(int epicId);
 

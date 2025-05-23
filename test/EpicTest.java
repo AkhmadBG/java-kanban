@@ -42,7 +42,8 @@ class EpicTest {
     @Test
     void testToString() {
         epic.addSubTaskId(10);
-        String expected = "0,EPIC_TYPE,Эпик 1,Описание эпика,NEW,10";
+        String expected = "0,EPIC_TYPE,Эпик 1,Описание эпика,NEW,0,00:00 01.01.3000,00:00 01.01.1000,10";
         assertEquals(expected, epic.toString(), "Вывод должен соответствовать формату");
     }
+
 }
