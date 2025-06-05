@@ -287,6 +287,16 @@ public class InMemoryTaskManager implements TaskManager {
         return flag;
     }
 
+    @Override
+    public boolean checkIntersection(Task checkTask) {
+        boolean flag = false;
+        for (Task task : getPrioritisedTasks()) {
+            if (checkIntersectionTwoTasks(task, checkTask))
+                flag = true;
+        }
+        return flag;
+    }
+
     public Map<Integer, Task> getTasks() {
         return tasks;
     }
