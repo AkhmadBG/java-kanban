@@ -23,5 +23,6 @@ public class DurationAdapter extends TypeAdapter<Duration> {
         String str = in.nextString();
         return Duration.parse(str);
     }
+
 }
 

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static java.net.HttpURLConnection.*;
+
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
     private final TaskManager taskManager;
@@ -40,14 +42,13 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                 handleDeleteRequest(exchange, requestPath);
                 break;
             default:
-                sendResponse(exchange, "Метод не поддерживается", 405);
+                sendResponse(exchange, "Метод не поддерживается", HTTP_BAD_METHOD);
         }
 
     }
 
     private void handleGetRequest(HttpExchange exchange, String requestPath) throws IOException {
         String[] pathParts = requestPath.split("/");
-//        Gson gson = GsonConfig.buildGson();
         String response;
         if (pathParts.length > 2) {
             int taskId = Integer.parseInt(pathParts[2]);
@@ -61,11 +62,10 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             }
             response = gson.toJson(taskManager.getTasks());
         }
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handlePostRequest(HttpExchange exchange) throws IOException {
-        //Gson gson = GsonConfig.buildGson();
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         JsonElement jsonElement = JsonParser.parseString(body);
@@ -74,21 +74,19 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             return;
         }
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String taskName = jsonObject.get("name").getAsString();
-        String taskDescription = jsonObject.get("description").getAsString();
-        Task task = new Task(taskName, taskDescription);
-        if (taskManager.checkIntersection(task)) {
-            sendHasInteractions(exchange);
-        }
+        Task task = gson.fromJson(jsonObject, Task.class);
         if (jsonObject.has("id")) {
             int taskId = jsonObject.get("id").getAsInt();
             task.setId(taskId);
             taskManager.updateTask(task);
         } else {
+            if (taskManager.checkIntersection(task)) {
+                sendHasInteractions(exchange);
+            }
             taskManager.addNewTask(task);
         }
         String response = gson.toJson(task);
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handleDeleteRequest(HttpExchange exchange, String requestPath) throws IOException {
@@ -101,7 +99,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             }
             taskManager.deleteTask(taskId);
             response = "Задача с id " + taskId + " успешно удалена";
-            sendResponse(exchange, response, 200);
+            sendResponse(exchange, response, HTTP_OK);
         } else {
             sendNotFound(exchange, "Укажите id задачи для удаления");
         }

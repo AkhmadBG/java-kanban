@@ -9,6 +9,8 @@ import model.Task;
 import java.io.IOException;
 import java.util.List;
 
+import static java.net.HttpURLConnection.*;
+
 public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
 
     private final TaskManager taskManager;
@@ -25,20 +27,19 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
         if (method.equals("GET")) {
             handleGetRequest(exchange);
         } else {
-            sendResponse(exchange, "Метод не поддерживается", 405);
+            sendResponse(exchange, "Метод не поддерживается", HTTP_BAD_METHOD);
         }
     }
 
     private void handleGetRequest(HttpExchange exchange) throws IOException {
         List<Task> historyTasks = taskManager.getHistory();
         String response;
-        //Gson gson = GsonConfig.buildGson();
         if (historyTasks.isEmpty()) {
             response = "В истории нет задач";
             sendNotFound(exchange, response);
         } else {
             response = gson.toJson(historyTasks);
-            sendResponse(exchange, response, 200);
+            sendResponse(exchange, response, HTTP_OK);
         }
     }
 

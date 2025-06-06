@@ -25,7 +25,7 @@ public class Task implements Cloneable {
         this.name = name;
         this.taskStatus = TaskStatus.NEW;
         this.description = description;
-        this.duration = Duration.ZERO;
+        this.duration = Duration.ofMinutes(5);
         this.startTime = LocalDateTime.now();
     }
 

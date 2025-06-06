@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static java.net.HttpURLConnection.*;
+
 public class SubTasksHandler extends BaseHttpHandler implements HttpHandler {
 
     private final TaskManager taskManager;
@@ -40,14 +42,13 @@ public class SubTasksHandler extends BaseHttpHandler implements HttpHandler {
                 handleDeleteRequest(exchange, requestPath);
                 break;
             default:
-                sendResponse(exchange, "Метод не поддерживается", 405);
+                sendResponse(exchange, "Метод не поддерживается", HTTP_BAD_METHOD);
         }
 
     }
 
     private void handleGetRequest(HttpExchange exchange, String requestPath) throws IOException {
         String[] pathParts = requestPath.split("/");
-        //Gson gson = GsonConfig.buildGson();
         String response;
         if (pathParts.length > 2) {
             int subTaskId = Integer.parseInt(pathParts[2]);
@@ -61,11 +62,10 @@ public class SubTasksHandler extends BaseHttpHandler implements HttpHandler {
             }
             response = gson.toJson(taskManager.getSubTasks());
         }
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handlePostRequest(HttpExchange exchange) throws IOException {
-        //Gson gson = GsonConfig.buildGson();
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         JsonElement jsonElement = JsonParser.parseString(body);
@@ -74,22 +74,19 @@ public class SubTasksHandler extends BaseHttpHandler implements HttpHandler {
             return;
         }
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String taskName = jsonObject.get("name").getAsString();
-        String taskDescription = jsonObject.get("description").getAsString();
-        int epicId = jsonObject.get("epicId").getAsInt();
-        SubTask subTask = new SubTask(taskName, taskDescription, epicId);
-        if (taskManager.checkIntersection(subTask)) {
-            sendHasInteractions(exchange);
-        }
+        SubTask subTask = gson.fromJson(jsonObject, SubTask.class);
         if (jsonObject.has("id")) {
             int subTaskId = jsonObject.get("id").getAsInt();
             subTask.setId(subTaskId);
             taskManager.updateSubTask(subTask);
         } else {
+            if (taskManager.checkIntersection(subTask)) {
+                sendHasInteractions(exchange);
+            }
             taskManager.addNewSubTask(subTask);
         }
         String response = gson.toJson(subTask);
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handleDeleteRequest(HttpExchange exchange, String requestPath) throws IOException {
@@ -102,7 +99,7 @@ public class SubTasksHandler extends BaseHttpHandler implements HttpHandler {
             }
             taskManager.deleteSubTask(subTaskId);
             response = "Подзадача с id " + subTaskId + " успешно удалена";
-            sendResponse(exchange, response, 200);
+            sendResponse(exchange, response, HTTP_OK);
         } else {
             sendNotFound(exchange, "Укажите id подзадачи для удаления");
         }

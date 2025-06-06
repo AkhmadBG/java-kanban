@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static java.net.HttpURLConnection.*;
+
 public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
 
     private final TaskManager taskManager;
@@ -40,14 +42,13 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                 handleDeleteRequest(exchange, requestPath);
                 break;
             default:
-                sendResponse(exchange, "Метод не поддерживается", 405);
+                sendResponse(exchange, "Метод не поддерживается", HTTP_BAD_METHOD);
         }
 
     }
 
     private void handleGetRequest(HttpExchange exchange, String requestPath) throws IOException {
         String[] pathParts = requestPath.split("/");
-        //Gson gson = GsonConfig.buildGson();
         String response;
         if (pathParts.length > 3 && pathParts[3].equals("subtasks")) {
             int epicId = Integer.parseInt(pathParts[2]);
@@ -70,11 +71,10 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
             }
             response = gson.toJson(taskManager.getEpics());
         }
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handlePostRequest(HttpExchange exchange) throws IOException {
-        //Gson gson = GsonConfig.buildGson();
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         JsonElement jsonElement = JsonParser.parseString(body);
@@ -83,21 +83,19 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
             return;
         }
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String epicName = jsonObject.get("name").getAsString();
-        String epicDescription = jsonObject.get("description").getAsString();
-        Epic epic = new Epic(epicName, epicDescription);
-        if (taskManager.checkIntersection(epic)) {
-            sendHasInteractions(exchange);
-        }
+        Epic epic = gson.fromJson(jsonObject, Epic.class);
         if (jsonObject.has("id")) {
             int epicId = jsonObject.get("id").getAsInt();
             epic.setId(epicId);
             taskManager.updateEpic(epic);
         } else {
+            if (taskManager.checkIntersection(epic)) {
+                sendHasInteractions(exchange);
+            }
             taskManager.addNewEpic(epic);
         }
         String response = gson.toJson(epic);
-        sendResponse(exchange, response, 200);
+        sendResponse(exchange, response, HTTP_OK);
     }
 
     private void handleDeleteRequest(HttpExchange exchange, String requestPath) throws IOException {
@@ -110,7 +108,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
             }
             taskManager.deleteEpic(epicId);
             response = "Задача с id " + epicId + " успешно удалена";
-            sendResponse(exchange, response, 200);
+            sendResponse(exchange, response, HTTP_OK);
         } else {
             sendNotFound(exchange, "Укажите id задачи для удаления");
         }

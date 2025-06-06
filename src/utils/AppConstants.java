@@ -13,5 +13,6 @@ public final class AppConstants {
     public static final LocalDateTime DEFAULT_DATE_TO_EPIC_END = LocalDateTime.of(1000, Month.JANUARY, 1, 0, 0);
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final int PORT = 8080;
+    private static final int HTTP_NOT_ACCEPTABLE = 406;
 
 }
