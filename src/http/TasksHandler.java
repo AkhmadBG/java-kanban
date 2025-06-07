@@ -1,17 +1,19 @@
 package http;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
 import model.Task;
+import utils.DurationAdapter;
+import utils.LocalDateTimeAdapter;
+import utils.TaskDeserializer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static java.net.HttpURLConnection.*;
 
@@ -20,9 +22,13 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager taskManager;
     private final Gson gson;
 
-    public TasksHandler(TaskManager taskManager, Gson gson) {
+    public TasksHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
-        this.gson = gson;
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Task.class, new TaskDeserializer())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .create();
     }
 
     @Override
@@ -54,11 +60,13 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             int taskId = Integer.parseInt(pathParts[2]);
             if (taskManager.getTask(taskId) == null) {
                 sendNotFound(exchange, "Задача с id " + taskId + " не найдена");
+                return;
             }
             response = gson.toJson(taskManager.getTask(taskId));
         } else {
             if (taskManager.getTasks().isEmpty()) {
                 sendNotFound(exchange, "Список задач пуст");
+                return;
             }
             response = gson.toJson(taskManager.getTasks());
         }
@@ -82,6 +90,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         } else {
             if (taskManager.checkIntersection(task)) {
                 sendHasInteractions(exchange);
+                return;
             }
             taskManager.addNewTask(task);
         }
@@ -96,6 +105,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             int taskId = Integer.parseInt(pathParts[2]);
             if (taskManager.getTask(taskId) == null) {
                 sendNotFound(exchange, "Задача с id " + taskId + " не найдена");
+                return;
             }
             taskManager.deleteTask(taskId);
             response = "Задача с id " + taskId + " успешно удалена";

@@ -85,6 +85,10 @@ public class Task implements Cloneable {
         return startTime.plus(duration);
     }
 
+    public void setType(TaskType type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
